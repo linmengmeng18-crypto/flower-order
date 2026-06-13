@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>만만화 Flora</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Arial', sans-serif; background-color: #fff5f7; overflow-x: hidden; }
+
+    /* ── 로그인 페이지 ── */
+    #loginPage {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 40px 20px;
+    }
+
+    .petal {
+      position: absolute;
+      font-size: 28px;
+      opacity: 0.3;
+      animation: floatPetal 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .petal:nth-child(1)  { top:5%;  left:8%;  font-size:38px; animation-delay:0s; }
+    .petal:nth-child(2)  { top:15%; left:80%; font-size:24px; animation-delay:1s; }
+    .petal:nth-child(3)  { top:40%; left:3%;  font-size:20px; animation-delay:2s; }
+    .petal:nth-child(4)  { top:60%; left:85%; font-size:32px; animation-delay:0.5s; }
+    .petal:nth-child(5)  { top:80%; left:15%; font-size:22px; animation-delay:1.5s; }
+    .petal:nth-child(6)  { top:25%; left:45%; font-size:16px; animation-delay:3s; }
+    .petal:nth-child(7)  { top:90%; left:70%; font-size:26px; animation-delay:2.5s; }
+    .petal:nth-child(8)  { top:70%; left:50%; font-size:18px; animation-delay:4s; }
+
+    @keyframes floatPetal {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.92);
+      border-radius: 28px;
+      padding: 50px 44px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(233,30,99,0.18);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-logo { font-size: 60px; margin-bottom: 10px; animation: bloom 3s ease-in-out infinite; display: block; }
+    @keyframes bloom { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+
+    .login-title { font-size: 38px; font-weight: bold; color: #e91e63; letter-spacing: 3px; margin-bottom: 4px; }
+    .login-sub   { font-size: 14px; color: #888; letter-spacing: 2px; margin-bottom: 20px; }
+
+    .login-poem {
+      background: linear-gradient(135deg, #fce4ec, #fff9c4);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+    .login-poem p { font-size: 13px; color: #c62828; line-height: 2; font-style: italic; }
+
+    .login-field { margin-bottom: 16px; text-align: left; }
+    .login-field label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 6px; }
+    .login-field input {
+      width: 100%; padding: 14px 18px;
+      border: 2px solid #fce4ec; border-radius: 14px;
+      font-size: 15px; outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .login-field input:focus { border-color: #e91e63; box-shadow: 0 0 0 3px rgba(233,30,99,0.1); }
+
+    .login-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #ff9a9e, #e91e63);
+      color: white; border: none; border-radius: 14px;
+      font-size: 17px; font-weight: bold; cursor: pointer;
+      margin-top: 8px; transition: opacity 0.2s, transform 0.2s;
+      letter-spacing: 1px;
+    }
+    .login-btn:hover { opacity: 0.92; transform: translateY(-2px); }
+
+    .login-error {
+      display: none; margin-top: 12px; padding: 10px;
+      background: #fce4ec; border-radius: 10px;
+      color: #c62828; font-size: 13px;
+    }
+
+    /* ── 메인 페이지 ── */
+    #mainPage { display: none; }
+
+    .navbar {
+      background: white; padding: 15px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 10px rgba(255,154,158,0.2);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .navbar-logo { font-size: 20px; font-weight: bold; color: #e91e63; }
+    .navbar-right { display: flex; align-items: center; gap: 25px; }
+    .navbar-menu { display: flex; gap: 20px; list-style: none; }
+    .navbar-menu a { text-decoration: none; color: #555; font-size: 13px; font-weight: bold; transition: color 0.3s; }
+    .navbar-menu a:hover { color: #e91e63; }
+
+    .welcome-bar {
+      background: linear-gradient(135deg, #fce4ec, #fff9c4);
+      padding: 10px 40px; font-size: 14px; color: #c62828;
+      text-align: center; font-weight: bold;
+    }
+
+    .logout-btn {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: white; border: none; border-radius: 20px;
+      font-size: 13px; font-weight: bold; cursor: pointer;
+    }
+
+    .header { background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 60px 20px; text-align: center; }
+    .header h1 { color: white; font-size: 44px; letter-spacing: 3px; margin-bottom: 10px; }
+    .header p  { color: white; font-size: 15px; opacity: 0.9; }
+
+    .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+    .section-title { text-align: center; font-size: 26px; color: #e91e63; margin-bottom: 30px; font-weight: bold; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px; margin-bottom: 60px;
+    }
+    .dashboard-card {
+      background: white; border-radius: 15px; padding: 25px 15px;
+      text-align: center; box-shadow: 0 5px 15px rgba(255,154,158,0.15);
+    }
+    .dashboard-card .number { font-size: 34px; font-weight: bold; color: #e91e63; margin-bottom: 8px; }
+    .dashboard-card .label  { font-size: 13px; color: #888; }
+
+    .notice-banner {
+      background: linear-gradient(135deg, #fce4ec, #fff9c4);
+      border-radius: 15px; padding: 18px 28px;
+      text-align: center; margin-bottom: 40px; font-size: 14px; color: #c62828;
+    }
+
+    .flower-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 25px; margin-bottom: 60px;
+    }
+    .flower-card {
+      background: white; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 5px 20px rgba(255,154,158,0.2);
+      transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
+    }
+    .flower-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(255,154,158,0.3); }
+    .flower-image { width:100%; height:200px; object-fit:cover; display:block; }
+    .flower-emoji-placeholder {
+      width:100%; height:200px; display:flex; align-items:center;
+      justify-content:center; font-size:80px;
+      background: linear-gradient(135deg,#fce4ec,#fff9c4);
+    }
+    .flower-info { padding: 16px; }
+    .flower-name { font-size:18px; font-weight:bold; color:#333; margin-bottom:8px; }
+    .price-area  { margin-bottom:10px; }
+    .original-price { font-size:13px; color:#bbb; text-decoration:line-through; margin-bottom:2px; }
+    .sale-price { font-size:20px; color:#e91e63; font-weight:bold; }
+    .sale-price span { font-size:13px; color:#888; font-weight:normal; }
+    .badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; margin-bottom:8px; }
+    .badge-fresh    { background:#e8f5e9; color:#2e7d32; }
+    .badge-discount { background:#fff9c4; color:#f57f17; }
+    .badge-sale     { background:#fce4ec; color:#c62828; }
+    .stock-text { font-size:12px; color:#aaa; }
+    .care-btn {
+      display:block; width:100%; margin-top:8px; padding:8px;
+      background: linear-gradient(135deg,#e8f5e9,#fff9c4);
+      border:none; border-radius:8px; color:#2e7d32;
+      font-size:12px; font-weight:bold; cursor:pointer; text-align:center;
+    }
+    .care-btn:hover { background: linear-gradient(135deg,#c8e6c9,#fff176); }
+
+    /* 공통 폼 카드 */
+    .form-card {
+      background: white; border-radius: 20px; padding: 40px;
+      max-width: 600px; margin: 0 auto 60px auto;
+      box-shadow: 0 5px 20px rgba(255,154,158,0.2);
+    }
+    .form-card h3 { color: #e91e63; margin-bottom: 15px; font-size: 17px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display:block; margin-bottom:7px; color:#333; font-weight:bold; font-size:14px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:12px;
+      border:2px solid #fce4ec; border-radius:10px;
+      font-size:14px; outline:none; transition:border-color 0.3s;
+      font-family:Arial,sans-serif;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:#e91e63; }
+    .form-group textarea { height:70px; resize:none; }
+
+    .action-btn {
+      width:100%; padding:15px;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+      color:white; border:none; border-radius:10px;
+      font-size:16px; font-weight:bold; cursor:pointer; margin-top:4px;
+    }
+    .success-msg {
+      display:none; margin-top:16px; padding:14px;
+      background:#e8f5e9; border-radius:10px;
+      color:#2e7d32; text-align:center; font-weight:bold;
+    }
+
+    /* 꽃다발 */
+    .check-group { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+    .check-group label {
+      cursor:pointer; font-size:14px;
+      background:#fff5f7; padding:8px 14px;
+      border-radius:20px; border:2px solid #fce4ec; transition:all 0.2s;
+    }
+    .check-group label:hover { border-color:#e91e63; }
+    .radio-group { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .radio-group label {
+      cursor:pointer; font-size:14px;
+      background:#fff5f7; padding:8px 14px;
+      border-radius:20px; border:2px solid #fce4ec; transition:all 0.2s;
+    }
+    .radio-group label:hover { border-color:#e91e63; }
+    .bouquet-preview {
+      background:#fff5f7; border-radius:15px; padding:22px;
+      text-align:center; min-height:100px; margin-bottom:18px;
+      border:2px dashed #fce4ec;
+    }
+
+    /* 모달 */
+    .modal {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%; background:rgba(0,0,0,0.5);
+      z-index:1000; justify-content:center; align-items:center;
+    }
+    .modal-content {
+      background:white; border-radius:20px; padding:30px;
+      max-width:500px; width:90%; max-height:80vh;
+      overflow-y:auto; position:relative;
+    }
+    .modal-close { position:absolute; top:15px; right:20px; font-size:24px; cursor:pointer; color:#999; background:none; border:none; }
+    .modal h2 { color:#e91e63; margin-bottom:15px; font-size:20px; }
+    .care-tip { background:#fff5f7; border-radius:10px; padding:15px; margin-bottom:15px; }
+    .care-tip h3 { color:#e91e63; font-size:15px; margin-bottom:8px; }
+    .care-tip p  { color:#555; font-size:14px; line-height:1.8; }
+    .video-link {
+      display:block; text-align:center; padding:12px;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+      color:white; border-radius:10px; text-decoration:none;
+      font-weight:bold; margin-top:15px;
+    }
+
+    .section-divider { border:none; border-top:2px dashed #fce4ec; margin:40px 0; }
+
+    .footer { background: linear-gradient(135deg,#ff9a9e,#fad0c4); text-align:center; padding:40px 20px; color:white; }
+    .footer h2 { font-size:24px; margin-bottom:10px; }
+    .footer p  { font-size:14px; opacity:0.85; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     로그인 페이지
+══════════════════════════════ -->
+<div id="loginPage">
+  <span class="petal">🌸</span>
+  <span class="petal">🌹</span>
+  <span class="petal">🌻</span>
+  <span class="petal">🌷</span>
+  <span class="petal">💐</span>
+  <span class="petal">🌺</span>
+  <span class="petal">🌼</span>
+  <span class="petal">🌸</span>
+
+  <div class="login-card">
+    <span class="login-logo">🌸</span>
+    <div class="login-title">만만화</div>
+    <div class="login-sub">Flora · 꽃집 스마트 관리 시스템</div>
+
+    <div class="login-poem">
+      <p>
+        백화생일시양진 (百花生日是良辰)<br>
+        미도화조일반춘 (未到花朝一半春)<br>
+        꽃이 피는 날은 좋은 날이요<br>
+        꽃 피는 아침 전에도 봄은 절반이라네
+      </p>
+    </div>
+
+    <div class="login-field">
+      <label>아이디</label>
+      <input type="text" id="loginId" placeholder="아이디를 입력하세요"
+             onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+
+    <div class="login-field">
+      <label>비밀번호</label>
+      <input type="password" id="loginPw" placeholder="비밀번호를 입력하세요"
+             onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+
+    <div class="login-error" id="loginError">
+      아이디 또는 비밀번호를 확인해주세요.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     메인 페이지
+══════════════════════════════ -->
+<div id="mainPage">
+
+  <!-- 환영 메시지 바 -->
+  <div class="welcome-bar" id="welcomeBar"></div>
+
+  <!-- 네비게이션 -->
+  <nav class="navbar">
+    <div class="navbar-logo">🌸 만만화 Flora</div>
+    <div class="navbar-right">
+      <ul class="navbar-menu">
+        <li><a href="#dashboard">대시보드</a></li>
+        <li><a href="#flowers">오늘의 꽃</a></li>
+        <li><a href="#bouquet">꽃다발 만들기</a></li>
+        <li><a href="#reminder">송화 알림</a></li>
+        <li><a href="#request">꽃 신청</a></li>
+      </ul>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+    </div>
+  </nav>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <h1>만만화 Flora</h1>
+    <p>신선한 꽃으로 소중한 사람에게 마음을 전하세요</p>
+  </div>
+
+  <div class="container">
+
+    <!-- 대시보드 -->
+    <div id="dashboard"><br>
+      <div class="section-title">대시보드</div>
+      <div class="dashboard-grid">
+        <div class="dashboard-card"><div class="number">5</div><div class="label">전체 꽃 종류</div></div>
+        <div class="dashboard-card"><div class="number">3</div><div class="label">신선한 꽃</div></div>
+        <div class="dashboard-card"><div class="number">1</div><div class="label">할인중인 꽃</div></div>
+        <div class="dashboard-card"><div class="number">1</div><div class="label">특가처리 꽃</div></div>
+        <div class="dashboard-card"><div class="number">18</div><div class="label">총 판매 수량</div></div>
+        <div class="dashboard-card"><div class="number">₩30,600</div><div class="label">총 판매 금액</div></div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="notice-banner">
+      매일 오전 9시 가격 자동 업데이트 &nbsp;|&nbsp;
+      할인 꽃 알림 이메일 서비스 운영 중 &nbsp;|&nbsp;
+      오늘도 만만화를 찾아주셔서 감사합니다!
+    </div>
+
+    <!-- 꽃 목록 -->
+    <div id="flowers">
+      <div class="section-title">오늘의 꽃 목록</div>
+      <div class="flower-grid">
+
+        <div class="flower-card">
+          <img class="flower-image" src="여기에_장미_링크" alt="장미"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="flower-emoji-placeholder" style="display:none">🌹</div>
+          <div class="flower-info">
+            <div class="flower-name">장미</div>
+            <span class="badge badge-fresh">신선</span>
+            <div class="price-area"><div class="sale-price">₩3,000 <span>/ 송이</span></div></div>
+            <div class="stock-text">재고: 85송이</div>
+            <button class="care-btn" onclick="showCare('장미')">양화 가이드 보기</button>
+          </div>
+        </div>
+
+        <div class="flower-card">
+          <img class="flower-image" src="여기에_해바라기_링크" alt="해바라기"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="flower-emoji-placeholder" style="display:none">🌻</div>
+          <div class="flower-info">
+            <div class="flower-name">해바라기</div>
+            <span class="badge badge-fresh">신선</span>
+            <div class="price-area"><div class="sale-price">₩2,400 <span>/ 송이</span></div></div>
+            <div class="stock-text">재고: 60송이</div>
+            <button class="care-btn" onclick="showCare('해바라기')">양화 가이드 보기</button>
+          </div>
+        </div>
+
+        <div class="flower-card">
+          <img class="flower-image" src="여기에_백합_링크" alt="백합"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="flower-emoji-placeholder" style="display:none">🌷</div>
+          <div class="flower-info">
+            <div class="flower-name">백합</div>
+            <span class="badge badge-discount">할인중</span>
+            <div class="price-area">
+              <div class="original-price">₩4,000</div>
+              <div class="sale-price">₩2,800 <span>/ 송이</span></div>
+            </div>
+            <div class="stock-text">재고: 40송이</div>
+            <button class="care-btn" onclick="showCare('백합')">양화 가이드 보기</button>
+          </div>
+        </div>
+
+        <div class="flower-card">
+          <img class="flower-image" src="여기에_튤립_링크" alt="튤립"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="flower-emoji-placeholder" style="display:none">🌺</div>
+          <div class="flower-info">
+            <div class="flower-name">튤립</div>
+            <span class="badge badge-sale">특가처리</span>
+            <div class="price-area">
+              <div class="original-price">₩3,600</div>
+              <div class="sale-price">₩720 <span>/ 송이</span></div>
+            </div>
+            <div class="stock-text">재고: 20송이</div>
+            <button class="care-btn" onclick="showCare('튤립')">양화 가이드 보기</button>
+          </div>
+        </div>
+
+        <div class="flower-card">
+          <img class="flower-image" src="여기에_카네이션_링크" alt="카네이션"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="flower-emoji-placeholder" style="display:none">💐</div>
+          <div class="flower-info">
+            <div class="flower-name">카네이션</div>
+            <span class="badge badge-fresh">신선</span>
+            <div class="price-area"><div class="sale-price">₩2,000 <span>/ 송이</span></div></div>
+            <div class="stock-text">재고: 70송이</div>
+            <button class="care-btn" onclick="showCare('카네이션')">양화 가이드 보기</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- 꽃다발 커스터마이징 -->
+    <div id="bouquet">
+      <div class="section-title">나만의 꽃다발 만들기</div>
+      <div class="form-card">
+
+        <h3>꽃 선택 (여러 개 가능)</h3>
+        <div class="check-group">
+          <label><input type="checkbox" value="장미" onchange="updateBouquet()"> 장미 🌹</label>
+          <label><input type="checkbox" value="해바라기" onchange="updateBouquet()"> 해바라기 🌻</label>
+          <label><input type="checkbox" value="백합" onchange="updateBouquet()"> 백합 🌷</label>
+          <label><input type="checkbox" value="튤립" onchange="updateBouquet()"> 튤립 🌺</label>
+          <label><input type="checkbox" value="카네이션" onchange="updateBouquet()"> 카네이션 💐</label>
+        </div>
+
+        <h3>포장 스타일</h3>
+        <div class="radio-group">
+          <label><input type="radio" name="wrap" value="크라프트지" onchange="updateBouquet()"> 크라프트지</label>
+          <label><input type="radio" name="wrap" value="리본 포장" onchange="updateBouquet()"> 리본 포장</label>
+          <label><input type="radio" name="wrap" value="유리병" onchange="updateBouquet()"> 유리병</label>
+        </div>
+
+        <h3>메시지 카드</h3>
+        <div class="form-group">
+          <textarea id="bouquetMsg" placeholder="소중한 분께 전할 메시지..." onkeyup="updateBouquet()"></textarea>
+        </div>
+
+        <h3>신청자 이름</h3>
+        <div class="form-group">
+          <input type="text" id="bouquetName" placeholder="이름을 입력해주세요">
+        </div>
+
+        <div id="bouquetPreview" class="bouquet-preview">
+          <p style="color:#aaa;">꽃과 포장을 선택하면 미리보기가 나타납니다</p>
+        </div>
+
+        <button class="action-btn" onclick="orderBouquet()">이 꽃다발로 신청하기</button>
+        <div id="bouquetSuccess" class="success-msg">
+          꽃다발 신청이 완료되었습니다！담당자가 확인 후 연락드리겠습니다.
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- 송화 알림 신청 -->
+    <div id="reminder">
+      <div class="section-title">송화 알림 신청</div>
+      <div class="form-card">
+        <p style="color:#888; font-size:14px; margin-bottom:24px; text-align:center;">
+          소중한 분께 꽃을 보낼 날짜를 등록하시면<br>
+          3일 전과 당일에 알림 이메일을 보내드려요!
+        </p>
+
+        <div class="form-group">
+          <label>고객 이름</label>
+          <input type="text" id="remName" placeholder="이름을 입력해주세요">
+        </div>
+        <div class="form-group">
+          <label>이메일</label>
+          <input type="email" id="remEmail" placeholder="알림 받을 이메일">
+        </div>
+        <div class="form-group">
+          <label>받는 분 이름</label>
+          <input type="text" id="remReceiver" placeholder="예: 엄마, 친구 이름...">
+        </div>
+        <div class="form-group">
+          <label>꽃 종류</label>
+          <select id="remFlower">
+            <option value="">꽃을 선택해주세요</option>
+            <option value="장미">장미 🌹</option>
+            <option value="해바라기">해바라기 🌻</option>
+            <option value="백합">백합 🌷</option>
+            <option value="튤립">튤립 🌺</option>
+            <option value="카네이션">카네이션 💐</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>송화 날짜</label>
+          <input type="date" id="remDate">
+        </div>
+        <div class="form-group">
+          <label>메모 (선택)</label>
+          <input type="text" id="remMemo" placeholder="예: 어버이날, 생일 선물...">
+        </div>
+
+        <button class="action-btn" onclick="submitReminder()">알림 신청하기</button>
+        <div id="reminderSuccess" class="success-msg">
+          송화 알림 신청이 완료되었습니다！<br>
+          송화 날짜 3일 전과 당일에 이메일을 보내드려요.
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- 꽃 신청 -->
+    <div id="request">
+      <div class="section-title">원하시는 꽃을 신청해보세요!</div>
+      <div class="form-card">
+        <div class="form-group">
+          <label>고객 이름</label>
+          <input type="text" id="customerName" placeholder="이름을 입력해주세요">
+        </div>
+        <div class="form-group">
+          <label>이메일</label>
+          <input type="email" id="customerEmail" placeholder="이메일을 입력해주세요">
+        </div>
+        <div class="form-group">
+          <label>원하시는 꽃 이름</label>
+          <input type="text" id="flowerName" placeholder="예: 수국, 라벤더, 프리지아...">
+        </div>
+        <div class="form-group">
+          <label>원하시는 수량</label>
+          <input type="number" id="quantity" placeholder="수량을 입력해주세요" min="1">
+        </div>
+        <button class="action-btn" onclick="submitRequest()">신청하기</button>
+        <div class="success-msg" id="requestSuccess">
+          신청이 완료되었습니다! 확인 후 연락드리겠습니다.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <h2>🌸 만만화 Flora</h2>
+    <p>이메일 알림 서비스 | 매일 오전 9시 가격 업데이트</p>
+    <p style="margin-top:8px; font-size:13px;">신선한 꽃, 합리적인 가격으로 만나보세요</p>
+  </div>
+
+</div><!-- end mainPage -->
+
+
+<!-- 양화 가이드 모달 -->
+<div class="modal" id="careModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="careContent"></div>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════
+// Apps Script Web App URL
+// ═══════════════════════════
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyg_Yas76VRh09sm8TUzFZ3KnOb_EvYI7G_15PFtkYn3KZtzA-TBB10FHBq0nqWDCib/exec';
+
+// ═══════════════════════════
+// 로그인
+// ═══════════════════════════
+var currentUser = '';
+
+function doLogin() {
+  var id = document.getElementById('loginId').value.trim();
+  var pw = document.getElementById('loginPw').value.trim();
+  var err = document.getElementById('loginError');
+
+  if (!id || !pw) {
+    err.style.display = 'block';
+    err.textContent = '아이디와 비밀번호를 입력해주세요.';
+    return;
+  }
+
+  // 아이디와 비밀번호가 있으면 로그인 허용
+  currentUser = id;
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'block';
+  err.style.display = 'none';
+
+  // 환영 메시지
+  document.getElementById('welcomeBar').textContent =
+    currentUser + '님 안녕하세요！만만화를 이용해 주셔서 정말 감사합니다！🌸';
+}
+
+function doLogout() {
+  currentUser = '';
+  document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPw').value = '';
+}
+
+// ═══════════════════════════
+// 양화 가이드
+// ═══════════════════════════
+var careData = {
+  "장미":    { title:"장미 양화 가이드",    water:"2~3일에 한 번 물을 주세요.",          fresh:"줄기를 사선으로 잘라 매일 물을 갈아주세요.",  hydro:"직사광선을 피하고 깨끗한 물에 담그세요.",       video:"https://www.youtube.com/results?search_query=장미+오래+키우는+방법" },
+  "해바라기": { title:"해바라기 양화 가이드", water:"매일 물을 주세요. 햇빛을 좋아해요.",  fresh:"줄기 끝을 사선으로 잘라 물에 꽂아주세요.",  hydro:"줄기 끝만 물에 담그세요.",                      video:"https://www.youtube.com/results?search_query=해바라기+수경재배" },
+  "백합":    { title:"백합 양화 가이드",    water:"2일에 한 번 촉촉하게 유지해주세요.",   fresh:"꽃가루가 묻을 수 있으니 수술을 제거해주세요.", hydro:"잎이 물에 닿지 않게 해주세요.",                  video:"https://www.youtube.com/results?search_query=백합+꽃+보관방법" },
+  "튤립":    { title:"튤립 양화 가이드",    water:"서늘하고 밝은 곳에 두세요.",          fresh:"차가운 물에 꽂아 냉장보관하면 오래 유지돼요.", hydro:"뿌리가 물에 잠기도록 해주세요.",                  video:"https://www.youtube.com/results?search_query=튤립+수경재배+방법" },
+  "카네이션": { title:"카네이션 양화 가이드", water:"흙이 마르면 물을 주세요.",            fresh:"설탕을 약간 넣으면 더 오래 유지돼요.",         hydro:"물에 꽂아두면 2~3주 유지돼요.",                  video:"https://www.youtube.com/results?search_query=카네이션+오래+키우기" }
+};
+
+function showCare(name) {
+  var d = careData[name];
+  document.getElementById('careContent').innerHTML =
+    "<h2>" + d.title + "</h2>" +
+    "<div class='care-tip'><h3>물 주는 방법</h3><p>" + d.water + "</p></div>" +
+    "<div class='care-tip'><h3>신선하게 보관하는 방법</h3><p>" + d.fresh + "</p></div>" +
+    "<div class='care-tip'><h3>수경재배 방법</h3><p>" + d.hydro + "</p></div>" +
+    "<a class='video-link' href='" + d.video + "' target='_blank'>YouTube에서 영상 보기</a>";
+  document.getElementById('careModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('careModal').style.display = 'none'; }
+
+// ═══════════════════════════
+// 꽃다발 커스터마이징
+// ═══════════════════════════
+var emojiMap = {"장미":"🌹","해바라기":"🌻","백합":"🌷","튤립":"🌺","카네이션":"💐"};
+
+function updateBouquet() {
+  var sel = [];
+  document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){ sel.push(cb.value); });
+  var wrap = document.querySelector('input[name="wrap"]:checked');
+  var msg  = document.getElementById('bouquetMsg').value;
+  var prev = document.getElementById('bouquetPreview');
+  if (!sel.length) { prev.innerHTML='<p style="color:#aaa;">꽃과 포장을 선택하면 미리보기가 나타납니다</p>'; return; }
+  prev.innerHTML =
+    '<div style="font-size:38px;margin-bottom:12px;">' + sel.map(function(f){return emojiMap[f]||'🌸';}).join(' ') + '</div>' +
+    '<p style="font-weight:bold;color:#e91e63;margin-bottom:6px;">' + sel.join(' + ') + '</p>' +
+    '<p style="color:#888;font-size:13px;margin-bottom:6px;">포장：' + (wrap?wrap.value:'미선택') + '</p>' +
+    (msg?'<p style="color:#555;font-size:13px;font-style:italic;">"'+msg+'"</p>':'');
+}
+
+function orderBouquet() {
+  var sel = [];
+  document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){ sel.push(cb.value); });
+  if (!sel.length)  { alert('꽃을 선택해주세요!'); return; }
+  var wrap = document.querySelector('input[name="wrap"]:checked');
+  if (!wrap)        { alert('포장 스타일을 선택해주세요!'); return; }
+  var name = document.getElementById('bouquetName').value || currentUser || '익명';
+  var msg  = document.getElementById('bouquetMsg').value;
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'bouquetRequest',
+      customerName: name,
+      flowers: sel.join(', '),
+      wrap: wrap.value,
+      message: msg
+    })
+  }).then(function(){
+    document.getElementById('bouquetSuccess').style.display = 'block';
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked=false; });
+    document.querySelectorAll('input[name="wrap"]').forEach(function(r){ r.checked=false; });
+    document.getElementById('bouquetMsg').value  = '';
+    document.getElementById('bouquetName').value = '';
+    updateBouquet();
+  }).catch(function(){ alert('오류가 발생했습니다. 다시 시도해주세요.'); });
+}
+
+// ═══════════════════════════
+// 송화 알림 신청
+// ═══════════════════════════
+function submitReminder() {
+  var name     = document.getElementById('remName').value;
+  var email    = document.getElementById('remEmail').value;
+  var receiver = document.getElementById('remReceiver').value;
+  var flower   = document.getElementById('remFlower').value;
+  var date     = document.getElementById('remDate').value;
+  var memo     = document.getElementById('remMemo').value;
+
+  if (!name||!email||!receiver||!flower||!date) { alert('모든 필수 항목을 입력해주세요!'); return; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'reminderRequest',
+      customerName: name,
+      email: email,
+      receiver: receiver,
+      flowerType: flower,
+      sendDate: date,
+      memo: memo
+    })
+  }).then(function(){
+    document.getElementById('reminderSuccess').style.display = 'block';
+    document.getElementById('remName').value     = '';
+    document.getElementById('remEmail').value    = '';
+    document.getElementById('remReceiver').value = '';
+    document.getElementById('remFlower').value   = '';
+    document.getElementById('remDate').value     = '';
+    document.getElementById('remMemo').value     = '';
+  }).catch(function(){ alert('오류가 발생했습니다. 다시 시도해주세요.'); });
+}
+
+// ═══════════════════════════
+// 꽃 신청
+// ═══════════════════════════
+function submitRequest() {
+  var name   = document.getElementById('customerName').value;
+  var email  = document.getElementById('customerEmail').value;
+  var flower = document.getElementById('flowerName').value;
+  var qty    = document.getElementById('quantity').value;
+
+  if (!name||!email||!flower||!qty) { alert('모든 항목을 입력해주세요!'); return; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'flowerRequest',
+      customerName: name,
+      email: email,
+      flowerName: flower,
+      quantity: qty
+    })
+  }).then(function(){
+    document.getElementById('requestSuccess').style.display = 'block';
+    document.getElementById('customerName').value  = '';
+    document.getElementById('customerEmail').value = '';
+    document.getElementById('flowerName').value    = '';
+    document.getElementById('quantity').value      = '';
+  }).catch(function(){ alert('오류가 발생했습니다. 다시 시도해주세요.'); });
+}
+</script>
+
+</body>
+</html>
